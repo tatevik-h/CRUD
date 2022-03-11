@@ -1,0 +1,62 @@
+version: '3.7'
+services:
+  mongodb:
+    image: mongo:4.4.4
+    container_name: mongo
+    volumes:
+      - mongo_data:/usr/share/mongodb/data
+    ports:
+      - "27017:27017"
+
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    container_name: postgres
+    volumes:
+      - postgres_data:/usr/share/postgres/data
+    ports:
+      - "5432:5432"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    container_name: elastic
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
+    environment:
+      - node.name=es01
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ports:
+      - "9200:9200"
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.16.3
+    container_name: logstash
+    volumes:
+      - type: bind
+        source: ./config/logstash/pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    ports:
+       - "5002:5002/tcp"
+       - "5002:5002/udp"
+       - "9600:9600"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.3
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+volumes:
+  elastic_data:
+    driver: local
+  mongo_data:
+    driver: local
+  postgres_data:
+    driver: local
