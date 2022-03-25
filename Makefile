@@ -57,7 +57,7 @@ buildImage:
 ## 			usage |  --> make startContainer IMAGE_NAME=<IMAGE_NAME>
 ##
 startContainer: 
-	docker run -dp 8000:8000 ${IMAGE_NAME}
+	docker run -dp 8000:8000 --env-file ./config/variables/.env ${IMAGE_NAME}
 
 ##
 ##stopContainer
