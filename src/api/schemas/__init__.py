@@ -1,8 +1,9 @@
-from .feedback import Feedback as FeedbackSchema
+from .feedback import FeedbackCreate as FeedbackSchema
+from .feedback import FeedbackRetrieve
 from .waiter import Waiter as WaiterSchema
 
 __all__ = (
-    'FeedbackSchema',
-    'WaiterSchema',
+    "FeedbackSchema",
+    "FeedbackRetrieve",
+    "WaiterSchema",
 )
-

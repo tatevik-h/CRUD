@@ -15,6 +15,7 @@ class FeedbackCreate(BaseModel):
     class Config:
         orm_mode = True
 
+
 class FeedbackRetrieve(BaseModel):
     full_name: str
     phone_number: str
@@ -26,4 +27,3 @@ class FeedbackRetrieve(BaseModel):
 
     class Config:
         orm_mode = True
-

@@ -9,4 +9,3 @@ class Waiter(BaseModel):
 
     class Config:
         orm_mode = True
-
