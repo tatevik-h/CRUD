@@ -15,7 +15,7 @@ class FeedbackCRUD:
             email=feedback.email,
             score=feedback.score,
             comment=feedback.comment,
-            waiter_name=feedback.waiter_name,
+            waiter_id=feedback.waiter_id,
         )
         db.add(db_feedback)
         db.commit()
