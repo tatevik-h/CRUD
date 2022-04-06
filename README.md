@@ -55,6 +55,8 @@ The make file is composed by blocks that performs a specific checks. The followi
 | reload          | First command will reload the main project.             |
 | reloadInfra     | First command will reload database.                     |
 | fullreload      | First command will reload the project.                  |
+| insertData      | First command will insert data into 'waiter' table.     |
+| insertFeedback  | First command will insert data into 'feedback' table.   |
 | help            | First command will print help message.                  |
 
 To execute one block of `Makefile`, run the command:

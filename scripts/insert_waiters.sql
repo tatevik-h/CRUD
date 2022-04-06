@@ -1,7 +1,4 @@
-CREATE TABLE IF NOT EXISTS  waiter(
-    id SERIAL PRIMARY KEY,
-    name char(50)
-);
+CREATE DATABASE test;
 
 INSERT INTO waiter(name) 
 VALUES('Mark Lutz');

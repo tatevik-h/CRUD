@@ -5,7 +5,7 @@ IMAGE_NAME ?= app
 ## 			info  |  --> Start project.
 ## 			usage |  --> make start
 ##
-start: buildDB buildImage startContainer
+start: buildDB buildImage startContainer insertData insertFeedback
 
 ##
 ##stop
@@ -33,7 +33,7 @@ fullreload: reloadInfra reload
 ## 			info  |  --> Reload app.
 ## 			usage |  --> make reload
 ##
-reload: removeContainer buildImage startContainer
+reload: removeContainer buildImage startContainer insertData insertFeedback
 
 ##
 ##buildDB
@@ -57,7 +57,7 @@ buildImage:
 ## 			usage |  --> make startContainer IMAGE_NAME=<IMAGE_NAME>
 ##
 startContainer: 
-	docker run -dp 8000:8000 --env-file ./config/variables/.env ${IMAGE_NAME}
+	docker run -dp 8000:8000 --name app --env-file ./config/variables/.env -v "$$(PWD):/code" ${IMAGE_NAME}
 
 ##
 ##stopContainer
@@ -106,6 +106,25 @@ destroyDB:
 ##
 reloadInfra:
 	cd infra/ && docker-compose down -v && docker-compose up -d
+
+##
+##insertData
+## 			info  |  --> Insert data into  'waiters' table.
+## 			usage |  --> make insertData
+##
+insertData: 
+	@sleep 5
+	docker cp scripts/insert_waiters.sql postgres:/insert_waiters.sql
+	docker exec -u postgres postgres psql db postgres -f insert_waiters.sql
+
+##
+##insertFeedback
+## 			info  |  --> Insert data into  'feedback' table.
+## 			usage |  --> make insertFeedback
+##
+insertFeedback:
+	@sleep 5
+	docker exec -it app python scripts/insert_feedback.py
 
 help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'

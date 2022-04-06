@@ -9,4 +9,3 @@ class WaiterCRUD:
     async def get_waiters(db: Session, skip: int = 0, limit: int = 100):
         waiters = db.query(Waiter).offset(skip).limit(limit).all()
         return waiters
-

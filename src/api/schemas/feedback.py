@@ -17,6 +17,7 @@ class FeedbackCreate(BaseModel):
 
 
 class FeedbackRetrieve(BaseModel):
+    id: int
     full_name: str
     phone_number: str
     email: str

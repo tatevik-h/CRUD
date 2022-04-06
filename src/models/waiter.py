@@ -1,8 +1,8 @@
 from sqlalchemy import (
-    Column, 
-    String, 
-    Integer, 
-    DateTime, 
+    Column,
+    String,
+    Integer,
+    DateTime,
     ForeignKey,
 )
 from sqlalchemy.orm import relationship
@@ -17,4 +17,3 @@ class Waiter(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-

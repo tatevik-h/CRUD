@@ -1,5 +1,8 @@
+import asyncio
+
 from sqlalchemy.orm import Session
 
+from ..filters import FilterQueryBuilder
 from src.api.schemas import FeedbackSchema
 from src.models.feedback import Feedback
 from src.models.waiter import Waiter
@@ -9,8 +12,8 @@ class FeedbackCRUD:
     model_feedback_class = Feedback
     model_waiter_class = Waiter
 
-    @classmethod
-    async def create_feedback(cls, db: Session, feedback: FeedbackSchema):
+    @staticmethod
+    async def create_feedback(db: Session, feedback: FeedbackSchema) -> object:
         db_feedback = Feedback(
             full_name=feedback.full_name,
             phone_number=feedback.phone_number,
@@ -24,44 +27,37 @@ class FeedbackCRUD:
         db.refresh(db_feedback)
         return db_feedback
 
-    @classmethod
-    async def delete_feedback_by_full_name(cls, db: Session, name: str):
+    @staticmethod
+    def get_feedback_by_full_name(db: Session, name: str):
         feedback = db.query(Feedback).filter_by(full_name=name).first()
-        db.delete(feedback)
-        db.commit()
+        return feedback
+
+    @staticmethod
+    async def delete_feedback_by_full_name(db: Session, name: str):
+        feedback = FeedbackCRUD.get_feedback_by_full_name(db=db, name=name)
+        if feedback:
+            db.delete(feedback)
+            db.commit()
 
     @classmethod
-    async def list_feedback(cls, db: Session, score_filter=None, has_free_comment=None):
-        #feedback_cursor = db.query(
-        #    cls.model_feedback_class.full_name,
-        #    cls.model_feedback_class.phone_number,
-        #    cls.model_feedback_class.email,
-        #    cls.model_feedback_class.time_created,
-        #    cls.model_feedback_class.comment,
-        #    cls.model_feedback_class.score,
-        #    cls.model_feedback_class.waiter_id,
-        #    cls.model_waiter_class.name.label("waiter_name"),
-        #).join(
-        #    cls.model_waiter_class,
-        #    cls.model_feedback_class.waiter_id == cls.model_waiter_class.id,
-        #    isouter=True,
-        #)
-        feedback_cursor = db.query(cls.model_feedback_class)
-
-        if score_filter:
-            feedback_cursor = feedback_cursor.filter(
-                cls.model_feedback_class.score.in_(score_filter)
+    async def list_feedback(
+        cls,
+        db: Session,
+        score_filter=None,
+        has_free_comment=None,
+    ):
+        feedback_query = []
+        if filters:
+            feedback_query = FilterQueryBuilder.create(
+                    [has_free_comment, score_filter]
             )
 
-        if has_free_comment:
-            feedback_cursor = feedback_cursor.filter(
-                cls.model_feedback_class.comment != None
-            )
+        feedback = (
+            db.query(cls.model_feedback_class)
+            .filter(*feedback_query)
+            .order_by(cls.model_feedback_class.time_created.desc())
+        )
 
-        #feedback_cursor = db.query(
-        #        .waiter
-        #        )
+        feedback_count = feedback.count()
 
-        feedback_count = feedback_cursor.count()
-
-        return feedback_cursor, feedback_count
+        return feedback, feedback_count
