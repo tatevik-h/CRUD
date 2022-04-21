@@ -47,7 +47,7 @@ class FeedbackCRUD:
         has_free_comment=None,
     ):
         feedback_query = []
-        if filters:
+        if score_filter or has_free_comment:
             feedback_query = FilterQueryBuilder.create(
                     [has_free_comment, score_filter]
             )
