@@ -1,4 +1,4 @@
-# cfm-techdojo-survey-project
+# cfm-crud
 
 ## Requirements
 * Docker +20.10.12
